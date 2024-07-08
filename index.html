@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assessments - Zeds Album</title>
+    <title>Assessments - Kings Collection</title>
     <style>
         /* Your existing styles */
     </style>
@@ -63,7 +63,7 @@
                     if (isPreviewable(file.name)) {
                         previewButton = document.createElement('button');
                         previewButton.textContent = 'Preview';
-                        previewButton.onclick = () => previewFile(file.download_url);
+                        previewButton.onclick = () => previewFile(file.download_url, file.name);
                     } else {
                         previewButton = document.createElement('span');
                         previewButton.textContent = 'Preview not available';
@@ -111,28 +111,29 @@
             }
         }
 
-        async function previewFile(url) {
+        async function previewFile(url, fileName) {
             const previewFrame = document.getElementById('previewFrame');
             const encodedUrl = encodeURIComponent(url);
-            let previewUrl = '';
 
-            if (isPreviewable(url)) {
-                previewUrl = url;
+            if (isImageFile(fileName)) {
+                previewFrame.src = url;
             } else if (url.endsWith('.pdf')) {
-                previewUrl = `https://drive.google.com/viewerng/viewer?embedded=true&url=${encodedUrl}`;
+                previewFrame.src = `https://drive.google.com/viewerng/viewer?embedded=true&url=${encodedUrl}`;
             } else if (url.endsWith('.doc') || url.endsWith('.docx')) {
-                previewUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodedUrl}`;
+                previewFrame.src = `https://view.officeapps.live.com/op/embed.aspx?src=${encodedUrl}`;
             } else {
                 alert('File type not supported for preview.');
-                return;
             }
-
-            previewFrame.src = previewUrl;
         }
 
         function isPreviewable(fileName) {
             const ext = fileName.split('.').pop().toLowerCase();
             return ['pdf', 'doc', 'docx', 'png', 'jpg', 'jpeg', 'gif'].includes(ext);
+        }
+
+        function isImageFile(fileName) {
+            const ext = fileName.split('.').pop().toLowerCase();
+            return ['png', 'jpg', 'jpeg', 'gif'].includes(ext);
         }
 
         (async function() {
