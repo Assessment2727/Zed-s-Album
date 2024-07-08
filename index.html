@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zed's Album</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .photo {
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Zed's Album</h1>
+
+    <div id="album">
+        <!-- Placeholder for dynamically loaded photos -->
+    </div>
+
+    <script>
+        // Function to fetch photos from the server and display them
+        async function fetchPhotosAndDisplay() {
+            try {
+                const response = await fetch('list_photos.php'); // Replace with actual endpoint
+                if (!response.ok) {
+                    throw new Error('Failed to fetch photos');
+                }
+                const photos = await response.json(); // Assuming server returns JSON array of photo filenames
+
+                const albumDiv = document.getElementById('album');
+                photos.forEach(filename => {
+                    const photoDiv = document.createElement('div');
+                    photoDiv.classList.add('photo');
+                    photoDiv.onclick = () => downloadPhoto(filename);
+                    const img = document.createElement('img');
+                    img.src = filename;
+                    img.alt = filename;
+                    photoDiv.appendChild(img);
+                    albumDiv.appendChild(photoDiv);
+                });
+            } catch (error) {
+                console.error('Error fetching or displaying photos:', error);
+            }
+        }
+
+        // Function to download a photo when clicked
+        function downloadPhoto(filename) {
+            // Create a temporary anchor element
+            var link = document.createElement('a');
+            link.href = filename;
+            link.download = filename.split('/').pop(); // Extract filename from path
+            link.click(); // Trigger the download
+        }
+
+        // Load photos when the page is loaded
+        document.addEventListener('DOMContentLoaded', fetchPhotosAndDisplay);
+    </script>
+</body>
+</html>
